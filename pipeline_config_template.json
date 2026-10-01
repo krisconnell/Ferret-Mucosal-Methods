@@ -1,0 +1,54 @@
+{
+  "logs_dir": "./pipeline_logs",
+  "scripts": {
+    "trim_merge": "/stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024-09-25A/bcrseq_igseq/trim_merge.py",
+    "identify_genes": "/stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024-09-25A/bcrseq_igseq/identify_genes.py",
+    "filter_collapse": "/stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024-09-25A/bcrseq_igseq/filter_collapse.py",
+    "cluster": "/stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024-09-25A/bcrseq_igseq/cluster.py",
+    "make_searchable": "/stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024-09-25A/bcrseq_igseq/make_searchable.py"
+  },
+  "make_searchable_extensions_txt": "/stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024-09-25A/bcrseq_igseq/extensions_proala_igg.txt",
+  "CDRH3_clonotyping_txt": "'stor/work/Georgiou/kmc5996/Ferret_Mucosal_Immunity/bcr_analysis_scripts_2024/CDRH3_clonotyping_txt",
+
+  "inputs": {
+    "trim_merge": {
+      "r1_regex": ".*(_R1|R1).*\\.fastq\\.gz$",
+      "r2_regex": ".*(_R2|R2).*\\.fastq\\.gz$"
+    },
+    "identify_genes": {
+      "assembled_glob": "*.assembled.fastq"
+    },
+    "filter_collapse": {
+      "annotated_tsv_glob": "*_IgBLAST.tsv"
+    },
+    "cluster": {
+      "filtered_tsv_glob": "*_filtered.tsv"
+    },
+    "make_searchable": {
+      "clustered_tsv_glob": "*_clustered.tsv"
+    }
+  },
+
+  "stages": {
+    "trim_merge": {
+      "enabled": true,
+      "args": ["--notrim"]
+    },
+    "identify_genes": {
+      "enabled": true,
+      "args": ["ferret", "--tool", "igblast"]
+    },
+    "filter_collapse": {
+      "enabled": true,
+      "args": ["--threshold", "2"]
+    },
+    "cluster": {
+      "enabled": true,
+      "args": ["CDRH3_clonotyping_txt"]
+    },
+    "make_searchable": {
+      "enabled": true,
+      "args": []
+    }
+  }
+}
