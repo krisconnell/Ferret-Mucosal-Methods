@@ -1,8 +1,9 @@
 '''
-This script takes an IgBLAST output TSV file as input.
+This script takes largely AIRR-formatted BCRseq heavy chain data that has been 
+filtered by `filter.py`.
 Primarily this script clusters CDRH3 sequences into estimated clonal lineages.
 The output from this script will be a TSV file similar to the input file, but 
-now including clustering data.
+now including cluster (estimated clonal lineage) assignments.
 
 USAGE:
 python cluster.py --help
@@ -13,84 +14,66 @@ import os
 import pandas as pd
 from datetime import datetime
 
-def process_tsv(tsv_path, executable_path, threshold):
-    # Setup log file
+def parse_arguments():
+    """Parse and return command-line arguments."""
+    parser = argparse.ArgumentParser(description='Process a TSV file containing cDNA sequences.')
+    parser.add_argument('annotation_tsv', type=str,
+                        help='Path to the input TSV file from BCR cDNA read annotation by IgBLAST.')
+    parser.add_argument('clustering_executable', type=str,
+                        help='Path to the executable file for clustering. Clustering executable must take a TXT file with single unlabeled column of CDR3 AA seqs & create a TSV file of two unlabeled columns, the input CDR3 AA seqs & their new cluster IDs.')
+    return parser.parse_args()
+
+def setup_logging(tsv_path):
+    """Create and return a log file handle for the TSV processing along with its path."""
     base_path = os.path.dirname(tsv_path)
     log_filename = datetime.now().strftime("log_clustering_%Y-%m-%d_%H-%M-%S.txt")
     log_path = os.path.join(base_path, log_filename)
-    
-    with open(log_path, 'w') as log_file:
-        log_file.write(f"Processing started for {tsv_path} using executable {executable_path}\n")
+    return open(log_path, 'w'), log_path
 
-        # Load TSV file
-        df = pd.read_csv(tsv_path, sep='\t')
-        initial_row_count = len(df)
-        log_file.write(f"Initial row count: {initial_row_count}\n")
+def cluster(df, tsv_path, executable_path):
+    """Cluster the CDR3 sequences and return the sorted merged DataFrame."""
+    # Extract unique CDR3 sequences and write to file
+    unique_cdr3 = df['cdr3_aa'].drop_duplicates().dropna()
+    cdr3s_file = os.path.splitext(tsv_path)[0] + '_cdr3s_aa.txt'
+    unique_cdr3.to_csv(cdr3s_file, index=False, header=False)
 
-        # Filter out rows where 'sequence' is NaN
-        filtered_df = df[df['sequence'].notna()].copy()
-        log_file.write(f"After removing rows with NaN 'sequence': {len(filtered_df)} reads left\n")
+    # Run the clustering executable
+    clusterIDs_file = os.path.splitext(tsv_path)[0] + '_clusterIDs.tsv'
+    os.system(f'"{executable_path}" -f "{cdr3s_file}" > "{clusterIDs_file}"')
 
-        # Filter out rows where 'cdr3_aa' is NaN
-        filtered_df = filtered_df[filtered_df['cdr3_aa'].notna()].copy()
-        log_file.write(f"After removing rows with NaN 'cdr3_aa': {len(filtered_df)} reads left\n")
+    # Merge the cluster assignments with the original DataFrame
+    cluster_results = pd.read_csv(clusterIDs_file, sep='\t', header=None, names=['cdr3_aa', 'ClusterID'])
+    merged_df = pd.merge(df, cluster_results, on='cdr3_aa', how='left')
 
-        # Filter out rows where 'stop_codon' is 'T'
-        filtered_df = filtered_df[filtered_df['stop_codon'] != 'T'].copy()
-        log_file.write(f"After removing rows where 'stop_codon' is 'T': {len(filtered_df)} reads left\n")
-
-        # Filter out rows where 'cdr3_aa' contains an asterisk
-        filtered_df = filtered_df[filtered_df['cdr3_aa'].apply(lambda x: '*' not in x)].copy()
-        log_file.write(f"After removing rows with asterisk in 'cdr3_aa': {len(filtered_df)} reads left\n")
-        print(filtered_df)
-
-        # Add nucleotide sequence counts and remove duplicates
-        #sequence_counts = filtered_df['sequence'].value_counts()
-        #sequence_counts_df = sequence_counts.reset_index()
-        #sequence_counts_df.columns = ['sequence', 'nt_seq_count']
-        #print(sequence_counts_df)
-        #filtered_df = filtered_df.merge(sequence_counts_df, on='sequence', how='left')
-        #print(filtered_df)
-        #filtered_df.drop_duplicates(subset=['sequence'], inplace=True)
-        #after_dup_removal_row_count = len(filtered_df)
-        #log_file.write(f"Row count after removing duplicates: {after_dup_removal_row_count}\n")
-        
-
-        # Filter out rows where nt_seq_count is below the user-specified threshold
-        filtered_df = filtered_df[filtered_df['nt_seq_count'] >= threshold]
-        after_mincount_row_count = len(filtered_df)
-        log_file.write(f"Row count after removing duplicates: {after_mincount_row_count}\n")
-
-        # Extract unique CDR3 sequences
-        unique_cdr3 = filtered_df['cdr3_aa'].drop_duplicates().dropna()
-        aa_seqs_file = os.path.splitext(tsv_path)[0] + '_unique_AAs.txt'
-        unique_cdr3.to_csv(aa_seqs_file, index=False, header=False)
-
-        # Run the clustering executable
-        clustered_file = os.path.splitext(tsv_path)[0] + '_clustered.tsv'
-        os.system(f"{executable_path} -f {aa_seqs_file} > {clustered_file}")
-
-        # Read and merge the cluster results
-        cluster_results = pd.read_csv(clustered_file, sep='\t', header=None, names=['cdr3_aa', 'ClusterID'])
-        merged_df = pd.merge(filtered_df, cluster_results, on='cdr3_aa', how='left')
-
-        # Sort dataframe
-        sorted_df = merged_df.sort_values(by=['ClusterID', 'nt_seq_count', 'cdr1_aa', 'cdr2_aa', 'cdr3_aa'], ascending=[True, False, True, True, True])
-
-        # Save the final dataframe
-        sorted_df.to_csv(clustered_file, sep='\t', index=False)
-        log_file.write(f"Final sorted dataframe saved to {clustered_file}\n")
-        log_file.write("Processing completed successfully.\n")
+    # Sort the DataFrame
+    clustered_df = merged_df.sort_values(
+        by=['ClusterID', 'nt_seq_count', 'cdr1_aa', 'cdr2_aa', 'cdr3_aa'],
+        ascending=[True, False, True, True, True]
+    )
+    return clustered_df
 
 def main():
-    parser = argparse.ArgumentParser(description='Process a TSV file containing cDNA sequences.')
-    parser.add_argument('annotation_tsv', type=str, help='Path to the input TSV file from BCR cDNA read annotation by IgBLAST.')
-    parser.add_argument('jeffclust_executable', type=str, help='Path to the executable file for clustering called CDR3_Clonotyping.')
-    parser.add_argument('threshold', type=int, help='Minimum count of full cDNA nucleotide sequences required to keep a row')
+    """Main function that orchestrates the clustering process."""
+    args = parse_arguments()
+    log_file, log_path = setup_logging(args.annotation_tsv)
+    try:
+        log_file.write(f"Processing started for {args.annotation_tsv} using executable {args.clustering_executable}\n")
 
-    args = parser.parse_args()
+        # Load TSV file directly in main for simplicity
+        df = pd.read_csv(args.annotation_tsv, sep='\t')
+        log_file.write(f"Initial row count: {len(df)}\n")
 
-    process_tsv(args.annotation_tsv, args.jeffclust_executable, args.threshold)
+        # Cluster the data (includes writing unique CDR3s, running clustering, merging results, and sorting)
+        clustered_df = cluster(df, args.annotation_tsv, args.clustering_executable)
+
+        # Save the final sorted DataFrame
+        clustered_file = os.path.splitext(args.annotation_tsv)[0] + '_clustered.tsv'
+        clustered_df.to_csv(clustered_file, sep='\t', index=False)
+
+        log_file.write(f"Final sorted dataframe saved to {clustered_file}\n")
+        log_file.write("Processing completed successfully.\n")
+    finally:
+        log_file.close()
 
 if __name__ == "__main__":
     main()
