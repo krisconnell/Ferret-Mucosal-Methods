@@ -1,7 +1,5 @@
 # BCR Transcript Sequencing and Immunoglobulin Protein Sequencing Pipeline
 
-- An in-depth README.md file is pending.
+- Script for analyzing VH BCR databases using Ig-BLAST. Scripts are designed by Luke Hebert (Github location https://github.com/LukeHebert) and adjusted in spaces by Kristin Connelly. Pipeline configuration in the image below:
 
-- The scripts available here are stable if not perfect and there are many downstream scripts to come (see the TODO.md file for examples)
-
-![Walkthrough of analysis workflow](Diagram_BCRseq_SingleChain_Analysis.png)
+<img width="3000" height="2100" alt="DiversityPipelineFigure_KMC" src="https://github.com/user-attachments/assets/d3d903f8-0ba1-4eeb-9df0-3c861050adbc" />
