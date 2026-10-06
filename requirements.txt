@@ -1,4 +1,4 @@
-
+#NOTE: need to comb through this to make sure I caught everything. May need to go onto the diversity page to see how to get diversity dependencies set up. 
 # Core table processing
 pandas>=2.2,<3
 numpy>=2.0,<3
