@@ -12,6 +12,7 @@ Scripts for repertoire analysis:
 - **SHMPercentbytissue.py** : creates a PNG file of graphed SHM across tissues with mean values indicated. SHM calculated as difference in v_identity percent.
 - **isotype_overlap.py** : creates PNG files of IgG, IgA, and IgM lineage overlap across all tissues. Also has an option to define tissue "groups" like LRT, URT, systemic, et cetera, editable within the code.
 - **tissue_hydropathy_plot.py** : creates a PNG file gauguing repertoire hydropathy across tissues.
+- **Get logos plotting script from Luke and add it here!**
   
 <img width="3000" height="2100" alt="PlottingScripts" src="https://github.com/user-attachments/assets/189eb700-1077-46f2-92a9-7433a63ac3fa" />
 
