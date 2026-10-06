@@ -30,4 +30,4 @@ Again, these are set in the scripts but need to be adjusted for your needs.
 
 Results in diversity calculations (Shannon, Simpson, hill) and rarefaction curves you can use to determine appropriate number of clones to use for tissue analysis. Can be used in downstream analysis as well for determining clonal overlap. 
 
-<img width="3000" height="2100" alt="DiversityPipelineFigure_KMC" src="https://github.com/user-attachments/assets/8a2c11da-5ff7-4029-85e9-1abcd4fe3274" />
+<img width="2200" height="1540" alt="DiversityPipeline2" src="https://github.com/user-attachments/assets/d95eddcc-cbc2-495a-b64c-f9ddc8a54fa3" />
