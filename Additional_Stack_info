@@ -1,0 +1,72 @@
+Diversity scripts rely on stack for analysis:
+1. Install Haskell Stack. Download and install Stack for Windows from https://docs.haskellstack.org/en/stable/install_and_upgrade/
+During install, allow Stack to install GHC and MSYS2 when prompted.
+Once installed, open Command Prompt, PowerShell, or Git Bash, and run:
+stack --version
+
+2. Create a Workspace Directory
+Organize your files so dependencies and source code are clear:
+ 
+C:\Projects\
+└── BCellDiversity\
+    ├── diversity\          ← Clone the diversity repo here
+    └── fasta\              ← Clone the fasta repo here
+ 
+3. Clone Both Repositories
+In PowerShell or Git Bash:
+cd C:\Projects\BCellDiversity
+git clone https://github.com/DrexelSystemsImmunologyLab/diversity.git
+git clone https://github.com/GregorySchwartz/fasta.git
+
+4. Pin fasta Dependency Locally
+The diversity code depends on the fasta package, so you’ll need to point Stack to use your local version.
+Modify diversity/stack.yaml to include the local path to fasta:
+
+packages:
+- .
+- ../fasta
+
+This tells Stack to treat the fasta directory as a local dependency.
+
+5.1: Upgrade the Resolver (Recommended for Modern Stack)
+You'll update the project to use a newer GHC version (e.g., lts-12.0), which will:
+-Work with the current Stack version
+-Require updating the fasta and diversity .cabal files to fix any package compatibility issues
+This gives you a maintainable setup, even if it takes a bit of tweaking.
+change:
+
+yaml
+resolver: lts-8.0
+to:
+
+yaml
+resolver: lts-12.0
+
+Step 5.2: Run Stack Setup
+stack setup
+This will install GHC 8.4.4 for lts-12.0.
+ 
+6. Build the Project
+After stack setup, try to  build everything: 
+stack build
+ 
+You will see an error: Your local fasta package depends on pipes-text >= 0.0, but no compatible version is included in the lts-12.0 resolver. 
+Add pipes-text to extra-deps:
+Open your stack.yaml in:
+C:\Users\kconn\Bcelldiversity\diversity\stack.yaml
+Add this block to the bottom, if extra-deps: doesn't exist already:
+ 
+yaml
+CopyEdit
+extra-deps:
+  - pipes-text-1.0.1@sha256:1cf1d24104a517a7c44d4c756b379757dede071319162201ac17ceb5c28a571c,3102
+ 
+Then Try Building Again:
+stack build
+ 
+Building will take a while. The progress bar (Progress 0/63) showing up at the end is likely from Stack checking cached build tools or installing dependencies post-build — not an error.
+7. Test the diversity Command
+In PowerShell (still in the diversity folder):
+stack exec -- diversity --help
+ 
+This should work. 
