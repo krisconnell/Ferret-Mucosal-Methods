@@ -11,7 +11,7 @@ The original BCRseq pipeline is created by https://github.com/LukeHebert with mi
 
 # Environment 
 This script relies mainly on a standard python environment but must also rely on stack for part of the diversity analysis. 
-The stack version is very specific, see requirements.txt for further information. 
+See requirements.txt for further information. 
 
 Create and activate a local environment from the repository root, then also add a stack environment. 
 
