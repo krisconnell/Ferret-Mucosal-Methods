@@ -1,3 +1,4 @@
+
 Kristin Connelly, 3/2/2025 - Diversity and rarefaction analysis work 
 **Work in progress**
 Last Updated **10/1/2026** 
@@ -29,12 +30,4 @@ Again, these are set in the scripts but need to be adjusted for your needs.
 
 Results in diversity calculations (Shannon, Simpson, hill) and rarefaction curves you can use to determine appropriate number of clones to use for tissue analysis. Can be used in downstream analysis as well for determining clonal overlap. 
 
-NEXT STEPS: Use the script that takes files and extracts thresholded subclass and expected richness values as well as diversity calcs. Keep the diversity number per threshold and record it. 
-
-export PATH="$HOME/bcelldiversity_env/bin:$PATH" 
-export PATH="/stor/work/Georgiou/kmc5996/Scripts/Bcelldiversity/diversity/.stack-work/install/x86_64-linux-tinfo6/2e42b64e23ad59927bc3d9de54d617fad19ea72f747c90575494cf6b45653aab/8.4.3/bin:$PATH"
-export PATH="/usr/bin:$PATH"
-
-Run this script using tmux to deal with multiple animals at a time! 
-
-
+<img width="3000" height="2100" alt="DiversityPipelineFigure_KMC" src="https://github.com/user-attachments/assets/8a2c11da-5ff7-4029-85e9-1abcd4fe3274" />
