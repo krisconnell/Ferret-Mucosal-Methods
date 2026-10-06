@@ -9,12 +9,9 @@ The original BCRseq pipeline is created by https://github.com/LukeHebert with mi
 - the animal repertoire and tissue-specific repertoire undergoes thresholding to account for different sampling depths across tissues.
 - A series of scripts are included for plotting data after analysis. 
 
-<br>
-Environment 
+# Environment 
 This script relies mainly on a standard python environment but must also rely on stack for part of the diversity analysis. 
 The stack version is very specific, see requirements.txt for further information. 
 
 Create and activate a local environment from the repository root, then also add a stack environment. 
-
-<br>
 
