@@ -13,5 +13,5 @@ The original BCRseq pipeline is created by https://github.com/LukeHebert with mi
 This script relies mainly on a standard python environment but must also rely on stack for part of the diversity analysis. 
 See requirements.txt for further information. 
 
-Create and activate a local environment from the repository root, then also add a stack environment. 
+Create and activate a local environment from the repository root, then also add a stack environment, following Additional_Stack_info in FerretBCRDiversity file.
 
