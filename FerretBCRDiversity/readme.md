@@ -19,7 +19,9 @@ The first pipeline, run_clone_threshold_pipeline.py, is run assuming your direct
 
 These are already set in the scripts but adjust them according to your needs. 
 
-The second part of the pipeline runs your resulting thresholded fasta files through the diversity tool found at https://github.com/DrexelSystemsImmunologyLab/diversity?tab=readme-ov-file. Needs: 
+The second part of the pipeline runs your resulting thresholded fasta files through the diversity tool found at https://github.com/DrexelSystemsImmunologyLab/diversity?tab=readme-ov-file. *check the Additional_Stack_info file for more information on setting this up.*
+
+Needs: 
 
 "-d", "--directory", "Directory containing thresholded FASTA files"
 "-s", "--sample", "Sample name"
