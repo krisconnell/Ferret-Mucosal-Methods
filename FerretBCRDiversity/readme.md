@@ -3,7 +3,7 @@ Kristin Connelly, 3/2/2025 - Diversity and rarefaction analysis work
 **Work in progress**
 Last Updated **10/1/2026** 
 
-This folder contains scripts aalculating B cell diversity across different tissues in a ferret model. It is in Haskell and python and is designed to be run at the command line. The diversity analysis included is sourced from https://github.com/DrexelSystemsImmunologyLab/diversity. 
+This folder contains scripts calculating B cell diversity across different tissues in a ferret model. It is in Haskell and in python and is designed to be run at the command line. The diversity analysis included is sourced from https://github.com/DrexelSystemsImmunologyLab/diversity. 
 
 The scripts first take a search database as an input, collapse different clone reads with same CDRH3 sequences into smaller clone subsections, and outputs different fasta files that represent databases with x or more instances of each clonal lineage. This is helpful to weed out clones that are not sampled enough to be considered an accurate representation of the tissue environment. Note the input search database used for creating this script comes from Luke's new BCR pipeline using IgBLAST, which is present in the FerretBCR folder modified from https://github.com/LukeHebert/bcrseq_igseq. 
 
